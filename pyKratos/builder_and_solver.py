@@ -174,11 +174,11 @@ class BuilderAndSolver:
         return [A, dx, b]
     
     def ComputeReactions(self, A, dx, b, dragLift):
-        A, dx, b = self.Build(A, dx, b)
+        #A, dx, b = self.Build(A, dx, b)
 
-        dragLift[0] = 0.0
-        dragLift[1] = 0.0
-        for node in self.model_part.NodeIterators():
-            if(node.GetSolutionStepValue(IS_STRUCTURE,0)):
-                dragLift[0] += b[node.EquationId(VELOCITY_X)]
-                dragLift[1] -= b[node.EquationId(VELOCITY_Y)]
+        #dragLift[0] = 0.0
+        #dragLift[1] = 0.0
+        #for node in self.model_part.NodeIterators():
+        #    if(node.GetSolutionStepValue(IS_STRUCTURE,0)):
+        #        dragLift[0] += b[node.EquationId(VELOCITY_X)]
+        #        dragLift[1] -= b[node.EquationId(VELOCITY_Y)]
