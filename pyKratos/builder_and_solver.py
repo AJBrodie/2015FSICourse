@@ -169,7 +169,7 @@ class BuilderAndSolver:
         else:
 
             from scipy.sparse.linalg import spsolve
-            dx = sparse.linalg.spsolve(A, b)
+            dx = spsolve(A, b)
 
         return [A, dx, b]
     
@@ -182,3 +182,4 @@ class BuilderAndSolver:
         #    if(node.GetSolutionStepValue(IS_STRUCTURE,0)):
         #        dragLift[0] += b[node.EquationId(VELOCITY_X)]
         #        dragLift[1] -= b[node.EquationId(VELOCITY_Y)]
+        return
