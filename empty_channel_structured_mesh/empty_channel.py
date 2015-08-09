@@ -83,7 +83,7 @@ model_part.CloneTimeStep(2*dt)
 # ------------------------ Define Velocity Input Type ----------------------- #
 #vMax = 1
 vRange = array([0.5, 1])
-Period = 1
+Period = 0.5
 for node in model_part.NodeIterators():
     if 'xMin' in locals():
         if(node.coordinates[0] < xMin):
@@ -96,6 +96,18 @@ inletNodes = GetNodes(model_part, 0, xMin)
 #InletVelocity = ParabolicInletVelocity(inletNodes, vMax)
 InletVelocity = OscillatingParabolicInletVelocity(inletNodes, vRange, Period)
 
+
+# --------------------- Define and Preallocate Node Sets -------------------- #
+sampleNodes1 = GetNodes(model_part, 0, -10)		
+sampleNodes2 = GetNodes(model_part, 0, 7)
+sampleNodes3 = GetNodes(model_part, 0, 24)
+
+DataOutPut1 = "Data for first line: \n" + "Length: {} \n".format(len(sampleNodes1))
+DataOutPut2 = "Data for second line: \n" + "Length: {} \n".format(len(sampleNodes2))
+DataOutPut3 = "Data for third line: \n" + "Length: {} \n".format(len(sampleNodes3))
+
+
+# -------------------------------- Time Steps ------------------------------- #
 for i in range(3,nsteps):
     time = i*dt
     model_part.CloneTimeStep(time)
@@ -104,15 +116,42 @@ for i in range(3,nsteps):
     strategy.Solve()
     #check if this step results are written
     if(step >= outputStep):
+        # GID Files
         gid_io_input.WriteNodalResults(PRESSURE, model_part.NodeIterators(), time)
         gid_io_input.WriteNodalResults(VELOCITY, model_part.NodeIterators(), time)
         #gid_io_input.WriteNodalResults(ACCELERATION, model_part.NodeIterators(), time)
+        
+        # Line output storage        
+        DataOutPut1 = DataOutPut1 + str(time) + "\n"
+        DataOutPut2 = DataOutPut2 + str(time) + "\n"
+        DataOutPut3 = DataOutPut3 + str(time) + "\n"
+        for node in sampleNodes1:
+            DataOutPut1 = DataOutPut1 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
+        for node in sampleNodes2:
+            DataOutPut2 = DataOutPut2 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
+        for node in sampleNodes3:
+            DataOutPut3 = DataOutPut3 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
+            
         step = 0
     else:
         step = step + 1
 
 
 strategy.CloseFile()
+
+# Write and close line outputs
+DataOutFileFirstLine = open("DataOutFileFirstLine.txt","w")
+DataOutFileFirstLine.write(DataOutPut1)
+DataOutFileFirstLine.close()
+
+DataOutFileSecondLine = open("DataOutFileSecondLine.txt","w")
+DataOutFileSecondLine.write(DataOutPut2)
+DataOutFileSecondLine.close()
+
+DataOutFileThirdLine = open("DataOutFileThirdLine.txt","w")
+DataOutFileThirdLine.write(DataOutPut3)
+DataOutFileThirdLine.close()
+
 
 #stop timer
 stop = timeit.default_timer()

@@ -38,7 +38,7 @@ class ParabolicInletVelocity(InletVelocityFunc):
             Y = node.coordinates[1]
             #Z = node.coordinates[2]
             
-            U = absolute((Y-self.yMax)*(Y-self.yMin)) * self.vMax
+            U = (Y-self.yMax)*(Y-self.yMin) * self.vMax/(self.yMin*self.yMax)
             
             node.SetSolutionStepValue(VELOCITY_X, 0, U)
         return
@@ -66,11 +66,12 @@ class OscillatingParabolicInletVelocity(InletVelocityFunc):
     def ApplyInletVelocity(self,t):
                 
         for node in self.inletNodes:
-            #X = node.coordinates[0]
             Y = node.coordinates[1]
-            #Z = node.coordinates[2]
+            vMax = self.vRange[1]
+            vMin = self.vRange[0]            
+            vAvg = (vMax + vMin)/2
             
-            U = absolute((Y-self.yMax)*(Y-self.yMin)) * ((self.vRange[0]-self.vRange[1])/2*(cos(t / self.Period * 2 * pi) + 1))
+            U = (Y-self.yMax)*(Y-self.yMin) * vAvg/(self.yMin*self.yMax) + (vMax-vAvg)*cos(t/self.Period*2*pi)
             
             node.SetSolutionStepValue("VELOCITY_X", 0, U)
         
