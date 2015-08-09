@@ -1,1 +1,1 @@
-Program runntime: 8424.947093529
+Program runntime: 10860.964182741

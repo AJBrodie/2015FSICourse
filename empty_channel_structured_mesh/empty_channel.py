@@ -7,51 +7,7 @@ print(sys.path)
 
 from numpy import *
 from pyKratos import *
-
-# Function for defining the inlet velocity
-def GetNodes(model_part,dim,pos):
-    NodeSet = []
-    for node in model_part.NodeIterators():
-        if(absolute(node.coordinates[dim]-pos)<1*10**-4):
-            NodeSet.append(node)
-    return NodeSet
-        
-
-class InletVelocityFunc:
-    def __init__(self):
-        return
-        
-    def ApplyInletVelocity(self):
-        return
-        
-class ParabolicInletVelocity(InletVelocityFunc):
-    def __init__(self, inletNodes,vMax):
-        self.inletNodes = inletNodes
-        self.vMax = vMax
-        
-        yMin = inletNodes[0].coordinates[1]
-        yMax = yMin
-        for node in self.inletNodes:
-            if(node.coordinates[1] > yMax):
-                yMax = node.coordinates[1]
-            elif(node.coordinates[1] < yMin):
-                yMin = node.coordinates[1]
-                    
-        
-        self.yMax = yMax
-        self.yMin = yMin
-        return
-        
-    def ApplyInletVelocity(self):      
-        for node in self.inletNodes:
-            #X = node.coordinates[0]
-            Y = node.coordinates[1]
-            #Z = node.coordinates[2]
-            
-            U = absolute((Y-self.yMax)*(Y-self.yMin)) * self.vMax
-            
-            node.SetSolutionStepValue(VELOCITY_X, 0, U)
-        return
+from inflows import *
 
 #this i a modified copy of the stokes testcase to test the first prototype of the navier stokes element (steady) 
 
@@ -125,7 +81,9 @@ model_part.CloneTimeStep(dt)
 model_part.CloneTimeStep(2*dt)
 
 # ------------------------ Define Velocity Input Type ----------------------- #
-vMax = 1
+#vMax = 1
+vRange = array([0.5, 1])
+Period = 0.5
 for node in model_part.NodeIterators():
     if 'xMin' in locals():
         if(node.coordinates[0] < xMin):
@@ -135,25 +93,65 @@ for node in model_part.NodeIterators():
      
 inletNodes = GetNodes(model_part, 0, xMin)
 
-InletVelocity = ParabolicInletVelocity(inletNodes, vMax)
+#InletVelocity = ParabolicInletVelocity(inletNodes, vMax)
+InletVelocity = OscillatingParabolicInletVelocity(inletNodes, vRange, Period)
 
+
+# --------------------- Define and Preallocate Node Sets -------------------- #
+sampleNodes1 = GetNodes(model_part, 0, -10)		
+sampleNodes2 = GetNodes(model_part, 0, 7)
+sampleNodes3 = GetNodes(model_part, 0, 24)
+
+DataOutPut1 = "Data for first line: \n" + "Length: {} \n".format(len(sampleNodes1))
+DataOutPut2 = "Data for second line: \n" + "Length: {} \n".format(len(sampleNodes2))
+DataOutPut3 = "Data for third line: \n" + "Length: {} \n".format(len(sampleNodes3))
+
+
+# -------------------------------- Time Steps ------------------------------- #
 for i in range(3,nsteps):
     time = i*dt
     model_part.CloneTimeStep(time)
     print("time = ", time)
-    InletVelocity.ApplyInletVelocity()
+    InletVelocity.ApplyInletVelocity(time)
     strategy.Solve()
     #check if this step results are written
     if(step >= outputStep):
+        # GID Files
         gid_io_input.WriteNodalResults(PRESSURE, model_part.NodeIterators(), time)
         gid_io_input.WriteNodalResults(VELOCITY, model_part.NodeIterators(), time)
         #gid_io_input.WriteNodalResults(ACCELERATION, model_part.NodeIterators(), time)
+        
+        # Line output storage        
+        DataOutPut1 = DataOutPut1 + str(time) + "\n"
+        DataOutPut2 = DataOutPut2 + str(time) + "\n"
+        DataOutPut3 = DataOutPut3 + str(time) + "\n"
+        for node in sampleNodes1:
+            DataOutPut1 = DataOutPut1 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
+        for node in sampleNodes2:
+            DataOutPut2 = DataOutPut2 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
+        for node in sampleNodes3:
+            DataOutPut3 = DataOutPut3 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
+            
         step = 0
     else:
         step = step + 1
 
 
 strategy.CloseFile()
+
+# Write and close line outputs
+DataOutFileFirstLine = open("DataOutFileFirstLine.txt","w")
+DataOutFileFirstLine.write(DataOutPut1)
+DataOutFileFirstLine.close()
+
+DataOutFileSecondLine = open("DataOutFileSecondLine.txt","w")
+DataOutFileSecondLine.write(DataOutPut2)
+DataOutFileSecondLine.close()
+
+DataOutFileThirdLine = open("DataOutFileThirdLine.txt","w")
+DataOutFileThirdLine.write(DataOutPut3)
+DataOutFileThirdLine.close()
+
 
 #stop timer
 stop = timeit.default_timer()
