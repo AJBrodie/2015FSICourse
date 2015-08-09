@@ -7,51 +7,7 @@ print(sys.path)
 
 from numpy import *
 from pyKratos import *
-
-# Function for defining the inlet velocity
-def GetNodes(model_part,dim,pos):
-    NodeSet = []
-    for node in model_part.NodeIterators():
-        if(absolute(node.coordinates[dim]-pos)<1*10**-4):
-            NodeSet.append(node)
-    return NodeSet
-        
-
-class InletVelocityFunc:
-    def __init__(self):
-        return
-        
-    def ApplyInletVelocity(self):
-        return
-        
-class ParabolicInletVelocity(InletVelocityFunc):
-    def __init__(self, inletNodes,vMax):
-        self.inletNodes = inletNodes
-        self.vMax = vMax
-        
-        yMin = inletNodes[0].coordinates[1]
-        yMax = yMin
-        for node in self.inletNodes:
-            if(node.coordinates[1] > yMax):
-                yMax = node.coordinates[1]
-            elif(node.coordinates[1] < yMin):
-                yMin = node.coordinates[1]
-                    
-        
-        self.yMax = yMax
-        self.yMin = yMin
-        return
-        
-    def ApplyInletVelocity(self):      
-        for node in self.inletNodes:
-            #X = node.coordinates[0]
-            Y = node.coordinates[1]
-            #Z = node.coordinates[2]
-            
-            U = absolute((Y-self.yMax)*(Y-self.yMin)) * self.vMax
-            
-            node.SetSolutionStepValue(VELOCITY_X, 0, U)
-        return
+from inflows import *
 
 #this i a modified copy of the stokes testcase to test the first prototype of the navier stokes element (steady) 
 
@@ -125,7 +81,9 @@ model_part.CloneTimeStep(dt)
 model_part.CloneTimeStep(2*dt)
 
 # ------------------------ Define Velocity Input Type ----------------------- #
-vMax = 1
+#vMax = 1
+vRange = array([0.5, 1])
+Period = 1
 for node in model_part.NodeIterators():
     if 'xMin' in locals():
         if(node.coordinates[0] < xMin):
@@ -135,13 +93,14 @@ for node in model_part.NodeIterators():
      
 inletNodes = GetNodes(model_part, 0, xMin)
 
-InletVelocity = ParabolicInletVelocity(inletNodes, vMax)
+#InletVelocity = ParabolicInletVelocity(inletNodes, vMax)
+InletVelocity = OscillatingParabolicInletVelocity(inletNodes, vRange, Period)
 
 for i in range(3,nsteps):
     time = i*dt
     model_part.CloneTimeStep(time)
     print("time = ", time)
-    InletVelocity.ApplyInletVelocity()
+    InletVelocity.ApplyInletVelocity(time)
     strategy.Solve()
     #check if this step results are written
     if(step >= outputStep):
