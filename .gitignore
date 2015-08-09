@@ -2,4 +2,8 @@
 .spyderworkspace
 *~
 *.pyc
+__pycache__/
+empty_channel_structured_mesh/__pycache__/
+empty_channel_unstructured_mesh/__pycache__/
+pyKratos/__pycache__/
 
