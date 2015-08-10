@@ -118,7 +118,9 @@ for i in range(3,nsteps):
     time = i*dt
     model_part.CloneTimeStep(time)
     print("time = ", time)
+    
     InletVelocity.ApplyInletVelocity(time)
+    
     strategy.Solve()
     
     DataOutput1.writeTimeStep(time)
