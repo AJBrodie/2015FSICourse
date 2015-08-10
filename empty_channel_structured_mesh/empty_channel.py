@@ -109,7 +109,7 @@ sampleNodes3 = GetNodes(model_part, 0, 24)
 #DataOutPut3 = "Data for third line: \n" + "Length: {} \n".format(len(sampleNodes3))
 DataOutput1 = outputLine("DataOutFileFirstLine.txt",sampleNodes1)
 DataOutput2 = outputLine("DataOutFileSecondLine.txt",sampleNodes1)
-DataOutput3 = outputLine("DataOutFileTLine.txt",sampleNodes1)
+DataOutput3 = outputLine("DataOutFileThirdLine.txt",sampleNodes1)
 
 # -------------------------------- Time Steps ------------------------------- #
 for i in range(3,nsteps):
@@ -118,6 +118,11 @@ for i in range(3,nsteps):
     print("time = ", time)
     InletVelocity.ApplyInletVelocity(time)
     strategy.Solve()
+    
+    DataOutput1.writeTimeStep(time)
+    DataOutput2.writeTimeStep(time)
+    DataOutput3.writeTimeStep(time)
+    
     #check if this step results are written
     if(step >= outputStep):
         # GID Files
@@ -135,9 +140,7 @@ for i in range(3,nsteps):
 #            DataOutPut2 = DataOutPut2 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
 #        for node in sampleNodes3:
 #            DataOutPut3 = DataOutPut3 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
-        DataOutput1.writeTimeStep(time)
-        DataOutput2.writeTimeStep(time)
-        DataOutput3.writeTimeStep(time)            
+            
         step = 0
     else:
         step = step + 1

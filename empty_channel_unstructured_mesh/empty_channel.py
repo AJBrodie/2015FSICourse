@@ -8,6 +8,9 @@ print(sys.path)
 from numpy import *
 from pyKratos import *
 
+from inflows import *
+from line_output import *
+
 #this i a modified copy of the stokes testcase to test the first prototype of the navier stokes element (steady) 
 
 #messure runtime
@@ -79,11 +82,42 @@ step = 1
 model_part.CloneTimeStep(dt)
 model_part.CloneTimeStep(2*dt)
 
+# ------------------------ Define Velocity Input Type ----------------------- #
+#vMax = 1
+vRange = array([2.5, 5])
+Period = 1
+for node in model_part.NodeIterators():
+    if 'xMin' in locals():
+        if(node.coordinates[0] < xMin):
+            xMin = node.coordinates[0]
+    else:
+        xMin = node.coordinates[0]
+     
+inletNodes = GetNodes(model_part, 0, xMin)
+
+#InletVelocity = ParabolicInletVelocity(inletNodes, vMax)
+InletVelocity = OscillatingParabolicInletVelocity(inletNodes, vRange, Period)
+
+# --------------------- Define and Preallocate Node Sets -------------------- #
+sampleNodes1 = GetNodes(model_part, 0, -10)		
+sampleNodes2 = GetNodes(model_part, 0, 7)
+sampleNodes3 = GetNodes(model_part, 0, 24)
+
+DataOutput1 = outputLine("DataOutFileFirstLine.txt",sampleNodes1)
+DataOutput2 = outputLine("DataOutFileSecondLine.txt",sampleNodes1)
+DataOutput3 = outputLine("DataOutFileThirdLine.txt",sampleNodes1)
+
+
 for i in range(3,nsteps):
     time = i*dt
     model_part.CloneTimeStep(time)
     print("time = ", time)
     strategy.Solve()
+    
+    DataOutput1.writeTimeStep(time)
+    DataOutput2.writeTimeStep(time)
+    DataOutput3.writeTimeStep(time)
+    
     #check if this step results are written
     if(step >= outputStep):
         gid_io_input.WriteNodalResults(PRESSURE, model_part.NodeIterators(), time)
@@ -95,6 +129,10 @@ for i in range(3,nsteps):
 
 
 strategy.CloseFile()
+
+DataOutput1.closeFile()
+DataOutput2.closeFile()
+DataOutput3.closeFile()
 
 #stop timer
 stop = timeit.default_timer()
