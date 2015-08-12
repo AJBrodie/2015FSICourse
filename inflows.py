@@ -44,7 +44,7 @@ class ParabolicInletVelocity(InletVelocityFunc):
         return
         
 class OscillatingParabolicInletVelocity(InletVelocityFunc):
-    def __init__(self,inletNodes,vRange,T):
+    def __init__(self, inletNodes, vRange, T):
         self.inletNodes = inletNodes
         self.vRange = vRange
         self.Period = T
@@ -64,14 +64,26 @@ class OscillatingParabolicInletVelocity(InletVelocityFunc):
         return
         
     def ApplyInletVelocity(self,t):
+        vMax = self.vRange[1]
+        vMin = self.vRange[0]
+        vAvg = (vMax + vMin)/2
+        
+        # Unit Frequency components
+        f = 0
+        for i in range(0,len(self.Period)):
+            f = f + cos(t/self.Period[i]*2*pi)/len(self.Period)
+            
+        # Magnitude
+        f = f * (vMax - vAvg) + vAvg
                 
         for node in self.inletNodes:
             Y = node.coordinates[1]
-            vMax = self.vRange[1]
-            vMin = self.vRange[0]
-            vAvg = (vMax + vMin)/2
+                        
+            # Unit Parabolic Base            
+            NormalParabola = (Y-self.yMax)*(Y-self.yMin)/(self.yMin*self.yMax)
             
-            U = (Y-self.yMax)*(Y-self.yMin)/(self.yMin*self.yMax) * ((vMax-vAvg)*cos(t/self.Period*2*pi) + vAvg)
+            # Compile            
+            U = NormalParabola * f
             
             node.SetSolutionStepValue("VELOCITY_X", 0, U)
         
