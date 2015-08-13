@@ -114,10 +114,10 @@ def empty_channel(meshType, dt, nsteps, vRange, T = None)
     sampleNodes3 = GetNodes(model_part, 0, 24)
     sampleNodes4 = GetNodes(model_part, 0, 40)
     
-    DataOutput1 = outputLine("DataOutFileFirstLine.txt",sampleNodes1)
-    DataOutput2 = outputLine("DataOutFileSecondLine.txt",sampleNodes2)
-    DataOutput3 = outputLine("DataOutFileThirdLine.txt",sampleNodes3)
-    DataOutput4 = outputLine("DataOutFileFourthLine.txt",sampleNodes4)
+    DataOutput1 = outputLine("Line01.res",sampleNodes1)
+    DataOutput2 = outputLine("Line02.res",sampleNodes2)
+    DataOutput3 = outputLine("Line03.res",sampleNodes3)
+    DataOutput4 = outputLine("Line04.res",sampleNodes4)
     
     
     for i in range(3,nsteps):
@@ -160,4 +160,8 @@ def empty_channel(meshType, dt, nsteps, vRange, T = None)
     LogFile.close()
     print("Program runntime: ",stop - start)
     
-    sys.mv
+    outputfolder = "/{0: f}-{0: f}_T"
+    if length(T)>1:
+        for i in range(1,length(T)):
+            outputfolder = outputfolder = ",{0: f}".format(T[i])
+    sys.mv("*.res", )
