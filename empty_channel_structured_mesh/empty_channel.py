@@ -84,7 +84,7 @@ model_part.CloneTimeStep(2*dt)
 
 # ------------------------ Define Velocity Input Type ----------------------- #
 #vMax = 1
-vRange = array([0.5, 1])
+vRange = array([2.5, 5])
 Period = array([1, 2, 3])
 for node in model_part.NodeIterators():
     if 'xMin' in locals():
@@ -105,12 +105,10 @@ sampleNodes2 = GetNodes(model_part, 0, 7)
 sampleNodes3 = GetNodes(model_part, 0, 24)
 sampleNodes4 = GetNodes(model_part, 0, 40)
 #
-#DataOutPut1 = "Data for first line: \n" + "Length: {} \n".format(len(sampleNodes1))
-#DataOutPut2 = "Data for second line: \n" + "Length: {} \n".format(len(sampleNodes2))
-#DataOutPut3 = "Data for third line: \n" + "Length: {} \n".format(len(sampleNodes3))
+
 DataOutput1 = outputLine("DataOutFileFirstLine.txt",sampleNodes1)
-DataOutput2 = outputLine("DataOutFileSecondLine.txt",sampleNodes1)
-DataOutput3 = outputLine("DataOutFileThirdLine.txt",sampleNodes1)
+DataOutput2 = outputLine("DataOutFileSecondLine.txt",sampleNodes2)
+DataOutput3 = outputLine("DataOutFileThirdLine.txt",sampleNodes3)
 DataOutput4 = outputLine("DataOutFileFourthLine.txt",sampleNodes4)
 
 # -------------------------------- Time Steps ------------------------------- #
@@ -134,17 +132,6 @@ for i in range(3,nsteps):
         gid_io_input.WriteNodalResults(PRESSURE, model_part.NodeIterators(), time)
         gid_io_input.WriteNodalResults(VELOCITY, model_part.NodeIterators(), time)
         #gid_io_input.WriteNodalResults(ACCELERATION, model_part.NodeIterators(), time)
-        
-        # Line output storage        
-#        DataOutPut1 = DataOutPut1 + str(time) + "\n"
-#        DataOutPut2 = DataOutPut2 + str(time) + "\n"
-#        DataOutPut3 = DataOutPut3 + str(time) + "\n"
-#        for node in sampleNodes1:
-#            DataOutPut1 = DataOutPut1 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
-#        for node in sampleNodes2:
-#            DataOutPut2 = DataOutPut2 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
-#        for node in sampleNodes3:
-#            DataOutPut3 = DataOutPut3 + "{} {} {}\n".format(node.GetSolutionStepValue(PRESSURE,0), node.GetSolutionStepValue(VELOCITY_X,0), node.GetSolutionStepValue(VELOCITY_Y,0))
             
         step = 0
     else:
@@ -154,17 +141,6 @@ for i in range(3,nsteps):
 strategy.CloseFile()
 
 # Write and close line outputs
-#DataOutFileFirstLine = open("DataOutFileFirstLine.txt","w")
-#DataOutFileFirstLine.write(DataOutPut1)
-#DataOutFileFirstLine.close()
-#
-#DataOutFileSecondLine = open("DataOutFileSecondLine.txt","w")
-#DataOutFileSecondLine.write(DataOutPut2)
-#DataOutFileSecondLine.close()
-#
-#DataOutFileThirdLine = open("DataOutFileThirdLine.txt","w")
-#DataOutFileThirdLine.write(DataOutPut3)
-#DataOutFileThirdLine.close()
 DataOutput1.closeFile()
 DataOutput2.closeFile()
 DataOutput3.closeFile()
