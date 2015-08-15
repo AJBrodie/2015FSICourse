@@ -73,7 +73,7 @@ class NewtonRaphsonStrategy:
             is_converged = True
             print("coverged after step: ",iteration_number)
             print("error is: ",error_L2_norm)
-            self.builder_and_solver.ComputeReactions(self.A, self.x, self.b, dragLift)
+            #self.builder_and_solver.ComputeReactions(self.A, self.x, self.b, dragLift)
         else:
             print("not converged, error is: ",error_L2_norm)
             print("ratio is: ", 1)
@@ -111,23 +111,23 @@ class NewtonRaphsonStrategy:
                 print("-----------------------------------------------------------------")
             
             iteration_number += 1
-        if(iteration_number == self.max_iteration_number):
-            print("*********maximum iterations reached*********")
-            print("error is: ",error_L2_norm)
-            print("ratio is: ",ratio)
-            self.builder_and_solver.ComputeReactions(self.A, self.x, self.b, dragLift)
-            print("solving process done!")
-            print("=================================================================")
-        elif(iteration_number > 1):
-            print("coverged after step: ",iteration_number)
-            print("error is: ",error_L2_norm)
-            print("ratio is: ",ratio)
-            self.builder_and_solver.ComputeReactions(self.A, self.x, self.b, dragLift)
-            print("solving process done!")
-            print("=================================================================")
-        
-        if(self.file != 0):
-            self.WriteDragforceToFile(dragLift)
+#        if(iteration_number == self.max_iteration_number):
+#            print("*********maximum iterations reached*********")
+#            print("error is: ",error_L2_norm)
+#            print("ratio is: ",ratio)
+#            self.builder_and_solver.ComputeReactions(self.A, self.x, self.b, dragLift)
+#            print("solving process done!")
+#            print("=================================================================")
+#        elif(iteration_number > 1):
+#            print("coverged after step: ",iteration_number)
+#            print("error is: ",error_L2_norm)
+#            print("ratio is: ",ratio)
+#            self.builder_and_solver.ComputeReactions(self.A, self.x, self.b, dragLift)
+#            print("solving process done!")
+#            print("=================================================================")
+#        
+#        if(self.file != 0):
+#            self.WriteDragforceToFile(dragLift)
 
         
     def SpyMatrix(self):
@@ -141,12 +141,13 @@ class NewtonRaphsonStrategy:
 
     
     def WriteDragforceToFile(self, dragLift):
-        time = self.model_part.ProcessInfo[TIME]
+        #time = self.model_part.ProcessInfo[TIME]
         
         #output 20 digits
-        output = str(time) + " " + str.format("{0:.20f}", dragLift[0]) + " " + str.format("{0:.20f}", dragLift[1]) + "\n"
+        #output = str(time) + " " + str.format("{0:.20f}", dragLift[0]) + " " + str.format("{0:.20f}", dragLift[1]) + "\n"
             
-        self.WriteToFile(output)
+        #self.WriteToFile(output)
+        return
     
     #file operations
     def OpenFile(self, filename):

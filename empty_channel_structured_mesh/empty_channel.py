@@ -9,7 +9,7 @@ from numpy import *
 from pyKratos import *
 
 from inflows import *
-from line_output import *
+from channelIO import *
 
 #this i a modified copy of the stokes testcase to test the first prototype of the navier stokes element (steady) 
 
