@@ -1,5 +1,5 @@
 #!/bin/bash
-j=0
+j=1
 for file in *.in; do
 	
 echo $file
