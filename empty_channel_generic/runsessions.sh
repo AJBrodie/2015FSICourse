@@ -8,10 +8,10 @@ js=$(printf '%02d' $j)
 python3 empty_channel.py
 
 mkdir ${js}
-mv "File.in" "${js}/"
-mv "*.msh" "${js}/"
-mv "*.res" "${js}/"
+mv File.in ${js}/
+mv *.msh ${js}/
+mv *.res ${js}/
+mv LOG.txt ${js}/
 ((j++))
 
 done
-	
