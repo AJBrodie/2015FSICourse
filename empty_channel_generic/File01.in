@@ -1,0 +1,11 @@
+EmptyChannelInputFile
+
+Mesh
+Structured
+
+Type
+ParabolicInput
+
+vMax
+100
+
