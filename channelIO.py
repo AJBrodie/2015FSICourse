@@ -79,6 +79,21 @@ class channelInput():
                             
                         self.vRange = vRange
                             
+                    elif line.find("vMax") != -1:
+                        section = self.input_file.readline()
+                        section = section.split()
+                        
+                        vMax=zeros(len(section))
+                        
+                        if len(section) > 1:
+                            print('The maximum velocity is not properly defined')
+                            return
+                        
+                        vMax[0] = section[0]                        
+                                                    
+                        self.vMax = vMax[0]
+                                                        
+                            
                             
                     elif line.find("Period-Time") != -1:
                         section = self.input_file.readline()
@@ -90,6 +105,31 @@ class channelInput():
                             T[i] = section[i]
                             
                         self.T = T
+                        
+                    elif line.find("Period-Space") != -1:
+                        section = self.input_file.readline()
+                        section = section.split()
+                        
+                        X = zeros(len(section))                        
+                        
+                        for i in range(0,len(section)):
+                            X[i] = section[i]
+                            
+                        self.X = X
+                        
+                    elif line.find("Spatial Velocity") != -1:
+                        section = self.input_file.readline()
+                        section = section.split()
+                        
+                        vSin=zeros(len(section))
+                        
+                        if len(section) > 1:
+                            print('The Sin velocity is not properly defined')
+                            return
+                        
+                        vSin[0] = section[0]                        
+                                                    
+                        self.vSin = vSin[0]
                             
             else:           
                 print('This is not a suitable input file')

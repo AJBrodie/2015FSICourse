@@ -84,8 +84,9 @@ model_part.CloneTimeStep(2*dt)
 
 # ------------------------ Define Velocity Input Type ----------------------- #
 #vMax = 1
-vRange = array([2.5, 5])
-Period = array([1, 2, 3])
+vRange = array([5, 10])
+vSin = 4
+Period = 5
 for node in model_part.NodeIterators():
     if 'xMin' in locals():
         if(node.coordinates[0] < xMin):

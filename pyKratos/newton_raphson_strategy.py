@@ -39,8 +39,9 @@ class NewtonRaphsonStrategy:
         # allocate memory for the system
         self.A, self.x, self.b = self.builder_and_solver.SetupSystem(
             self.A, self.dx, self.b)
-
-    def Solve(self):
+            
+    # def Solve(self):         Removed to allow for recording of number of iterations if desired
+    def Solve(self,RecordIteration):
         print("=================================================================")
         print("start solving process...")
                 
@@ -111,6 +112,11 @@ class NewtonRaphsonStrategy:
                 print("-----------------------------------------------------------------")
             
             iteration_number += 1
+            
+        # New lines to return iteration number if set in input    
+        if(RecordIteration==1):
+            return iteration_number
+            
 #        if(iteration_number == self.max_iteration_number):
 #            print("*********maximum iterations reached*********")
 #            print("error is: ",error_L2_norm)
