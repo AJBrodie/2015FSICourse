@@ -1,0 +1,13 @@
+EmptyChannelInputFile
+
+Mesh
+Unstructured
+
+Type
+OscillatingParabolicInput
+
+vRange
+25	75
+
+Period-Time
+0.05

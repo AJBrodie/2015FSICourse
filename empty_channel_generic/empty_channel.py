@@ -109,9 +109,13 @@ inletNodes = GetNodes(model_part, 0, xMin)
 
 # Define the inlet velocity        
 if inputFile.inletType == 'ParabolicInput':
-    InletVelocity = ParabolicInletVelocity(inletNodes, inputFile.vRange)
+    InletVelocity = ParabolicInletVelocity(inletNodes, inputFile.vMax)
 elif inputFile.inletType == 'OscillatingParabolicInput':
     InletVelocity = OscillatingParabolicInletVelocity(inletNodes, inputFile.vRange, inputFile.T)
+elif inputFile.inletType == 'AddedSinOnParabolicInput':
+    InletVelocity = AddedSinOnParabolicInletVelocity(inletNodes, inputFile.vRange, inputFile.vSin, inputFile.X[0])
+elif inputFile.inletType == 'ConvolutedSinOnParabolicInput':
+    InletVelocity = ConvolutedSinOnParabolicInletVelocity(inletNodes, inputFile.vRange, inputFile.vSin, inputFile.X[0])
 else:
     print('The flow type defined is unknown')
     
@@ -127,6 +131,7 @@ DataOutput2 = outputLine("Line02.res",sampleNodes2)
 DataOutput3 = outputLine("Line03.res",sampleNodes3)
 DataOutput4 = outputLine("Line04.res",sampleNodes4)
 
+AvgIterations = 0
 
 for i in range(3,nsteps):
     time = i*dt
@@ -135,7 +140,10 @@ for i in range(3,nsteps):
     
     InletVelocity.ApplyInletVelocity(time)
     
-    strategy.Solve()
+    iteration_number=strategy.Solve(1)
+    
+    print("Total iterations = ", iteration_number)
+    AvgIterations = AvgIterations + iteration_number
     
     DataOutput1.writeTimeStep(time)
     DataOutput2.writeTimeStep(time)
@@ -161,9 +169,13 @@ DataOutput4.closeFile()
 
 #stop timer
 stop = timeit.default_timer()
+AvgIterations = AvgIterations / (nsteps - 3)
 
 LogFile = open("LOG.txt","w")
 resultTime = "Program runntime: " + str(stop - start)
+resultIterations = "Average Iterations: " + str(AvgIterations)
 LogFile.write(resultTime)
+LogFile.write(resultIterations)
 LogFile.close()
 print("Program runntime: ",stop - start)
+print("Average Iterations: ", AvgIterations)
