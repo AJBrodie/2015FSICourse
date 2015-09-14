@@ -1,23 +1,26 @@
 close all;
 %clear all;
 %% Read in data and define points of interest
-filename = 'DataOutFileFirstLine.txt';
-[Pressure, Velocity_X1, Velocity_Y1, TimeSteps] = LoadData(filename);
-
-filename = 'DataOutFileSecondLine.txt';
-[Pressure, Velocity_X2, Velocity_Y2, TimeSteps] = LoadData(filename);
-
-filename = 'DataOutFileThirdLine.txt';
-[Pressure, Velocity_X3, Velocity_Y3, TimeSteps] = LoadData(filename);
-
-% filename = 'Line01.res';
+% filename = 'DataOutFileFirstLine.txt';
 % [Pressure, Velocity_X1, Velocity_Y1, TimeSteps] = LoadData(filename);
 % 
-% filename = 'Line02.res';
+% filename = 'DataOutFileSecondLine.txt';
 % [Pressure, Velocity_X2, Velocity_Y2, TimeSteps] = LoadData(filename);
 % 
-% filename = 'Line03.res';
+% filename = 'DataOutFileThirdLine.txt';
 % [Pressure, Velocity_X3, Velocity_Y3, TimeSteps] = LoadData(filename);
+
+filename = 'Line01.res';
+[Pressure1, Velocity_X1, Velocity_Y1, TimeSteps] = LoadData(filename);
+
+filename = 'Line02.res';
+[Pressure2, Velocity_X2, Velocity_Y2, TimeSteps] = LoadData(filename);
+
+filename = 'Line03.res';
+[Pressure3, Velocity_X3, Velocity_Y3, TimeSteps] = LoadData(filename);
+
+filename = 'Line04.res';
+[Pressure4, Velocity_X4, Velocity_Y4, TimeSteps] = LoadData(filename);
 
 middlePoint = round(length(Velocity_X3(1,:))/2);
 quarterPoint = ceil(length(Velocity_X3(1,:))/4);

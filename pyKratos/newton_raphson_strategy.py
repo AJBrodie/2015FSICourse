@@ -41,7 +41,7 @@ class NewtonRaphsonStrategy:
             self.A, self.dx, self.b)
             
     # def Solve(self):         Removed to allow for recording of number of iterations if desired
-    def Solve(self,RecordIteration):
+    def Solve(self,RecordIteration = 0):
         print("=================================================================")
         print("start solving process...")
                 
